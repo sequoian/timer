@@ -11,6 +11,11 @@
   text-align: center;
 }
 
+.display {
+  font-size: 15vw;
+  font-family: monospace;
+}
+
 button {
   height: 100px;
   width: 100px;

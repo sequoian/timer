@@ -26,12 +26,20 @@ class TimerInputs extends Component {
   }
 }
 
+class TimeDisplay extends Component {
+  render() {
+    return (
+      <div className="display">11:14:26</div>
+    );
+  }
+}
+
 class App extends Component {
   render() {
     return (
       <div className="App">
         <div className="timer">
-          <TimerInputs />
+          <TimeDisplay />
         </div>
         <div className="controls">
           <button>Start</button>
