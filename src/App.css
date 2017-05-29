@@ -1,1 +1,48 @@
+* {
+  box-sizing: border-box;
+}
 
+*:focus {
+  outline: none;
+}
+
+.timer {
+  margin: 100px 0;
+  text-align: center;
+}
+
+button {
+  height: 100px;
+  width: 100px;
+  border: none;
+  border-radius: 50%;
+  font-size: 30px;
+  font-family: monospace;
+  cursor: pointer;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-around;
+  max-width: 500px;
+  margin: auto;
+}
+
+.timer-inputs {
+  display: flex;
+  justify-content: space-around;
+  max-width: 500px;
+  margin: auto;
+  font-size: 18px;
+}
+
+.timer-inputs input {
+  font-size: 20px;
+  width: 50px;
+  padding: 3px;
+}
+
+.timer-inputs label {
+  display: block;
+  text-transform: capitalize;
+}
