@@ -45,11 +45,12 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hours: '',
-      minutes: '',
-      seconds: '',
+      hours: '0',
+      minutes: '0',
+      seconds: '0',
       timer: null,
-      intervalID: null
+      intervalID: null,
+      alert: false
     }
     this.changeInput = this.changeInput.bind(this);
     this.createTimer = this.createTimer.bind(this);
@@ -129,15 +130,23 @@ class App extends Component {
     this.setState({
       timer: timer
     });
+
+    // check to see if timer 0
+    if (timer.asSeconds() <= 0) {
+      this.stopTimer();
+      this.setState({
+        alert: true
+      });
+    }
   }
 
   clear() {
     this.stopTimer();
     this.removeTimer();
     this.setState({
-      hours: '',
-      minutes: '',
-      seconds: ''
+      hours: '0',
+      minutes: '0',
+      seconds: '0'
     });
   }
 
@@ -170,6 +179,7 @@ class App extends Component {
         />
       );
       
+      // if a timer exists, decide which control button to use
       if (this.state.intervalID) {
         controlButton = (
           <button
@@ -180,13 +190,23 @@ class App extends Component {
           </button>
         )
       }
-      else {
+      else if (!this.state.alert) {
         controlButton = (
           <button
             className="start"
             onClick={this.startTimer}
           >
             Start
+          </button>
+        );
+      }
+      else {
+        controlButton = (
+          <button
+            className="end"
+            onClick={this.removeTimer}
+          >
+            End
           </button>
         );
       }
