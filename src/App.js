@@ -156,6 +156,7 @@ class App extends Component {
 
       controlButton = (
         <button
+          className="start"
           onClick={this.createTimer}
         >
           Start
@@ -172,6 +173,7 @@ class App extends Component {
       if (this.state.intervalID) {
         controlButton = (
           <button
+            className="stop"
             onClick={this.stopTimer}
           >
             Stop
@@ -181,6 +183,7 @@ class App extends Component {
       else {
         controlButton = (
           <button
+            className="start"
             onClick={this.startTimer}
           >
             Start
@@ -188,7 +191,7 @@ class App extends Component {
         );
       }
     }
-    
+
     return (
       <div className="App">
         <div className="timer">
@@ -197,6 +200,7 @@ class App extends Component {
         <div className="controls">
           {controlButton}
           <button
+            className="clear"
             onClick={this.clear}
           >
             Clear

@@ -51,3 +51,15 @@ button {
   display: block;
   text-transform: capitalize;
 }
+
+.start {
+  background-color: #5cd866;
+}
+
+.stop {
+  background-color: #f97575;
+}
+
+.clear {
+  background-color: #77c7d4;
+}
