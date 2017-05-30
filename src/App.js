@@ -50,7 +50,8 @@ class App extends Component {
       seconds: '0',
       timer: null,
       intervalID: null,
-      alert: false
+      alert: false,
+      notify: false
     }
     this.changeInput = this.changeInput.bind(this);
     this.createTimer = this.createTimer.bind(this);
@@ -100,6 +101,17 @@ class App extends Component {
       })
 
       this.startTimer();
+
+      // check user for notification permission
+      if (!this.state.notify) {
+        Notification.requestPermission().then((result) => {
+          if (result === 'granted') {
+            this.setState({
+              notify: true
+            });
+          }
+        });
+      }   
     }
   }
 
@@ -130,13 +142,22 @@ class App extends Component {
     this.setState({
       timer: timer
     });
+    this.checkTimer(timer)
+  }
 
-    // check to see if timer 0
-    if (timer.asSeconds() <= 0) {
+  checkTimer(time) {
+    if (time.asSeconds() <= 0) {
       this.stopTimer();
       this.setState({
         alert: true
       });
+
+      // notify user
+      if (this.state.notify) {
+        const n = new Notification ("Alert", {
+          body: `Your timer has gone off.`
+        });
+      }
     }
   }
 
