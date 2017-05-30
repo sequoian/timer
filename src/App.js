@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import moment from 'moment';
+import 'moment-duration-format';
 import './App.css';
 
 class TimerInputs extends Component {
@@ -32,7 +34,9 @@ class TimerInputs extends Component {
 class TimeDisplay extends Component {
   render() {
     return (
-      <div className="display">11:14:26</div>
+      <div className="display">
+        {this.props.timer.format('h:mm:ss')}
+      </div>
     );
   }
 }
@@ -41,11 +45,14 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hours: '2',
-      minutes: '4',
-      seconds: '65'
+      hours: '',
+      minutes: '',
+      seconds: '',
+      timer: null,
+      intervalID: null
     }
     this.changeInput = this.changeInput.bind(this);
+    this.createTimer = this.createTimer.bind(this);
   }
 
   changeInput(event) {
@@ -56,19 +63,67 @@ class App extends Component {
     })
   }
 
+  createTimer() {
+    const inputs = [
+      this.state.hours,
+      this.state.minutes,
+      this.state.seconds
+    ];
+
+    // parse inputs
+    const time = inputs.map((item) => {
+      if (item === '') {
+        return 0;
+      }
+      else {
+        // string to number.  enforce positive integer.
+        return Math.round(Math.abs(parseInt(item, 10)));
+      }
+    });
+
+    // make sure there is a non-zero input
+    if (!time.every(item => item === 0)) {
+      const duration = moment.duration({
+        hours: time[0],
+        minutes: time[1],
+        seconds: time[2]
+      });
+      
+      this.setState({
+        timer: duration
+      })
+    }
+
+  }
+
   render() {
+    let timer = null;
+    if (this.state.timer) {
+      timer = (
+        <TimeDisplay
+          timer={this.state.timer}
+        />
+      )
+    }
+    else {
+      timer = (
+        <TimerInputs 
+          hours={this.state.hours}
+          minutes={this.state.minutes}
+          seconds={this.state.seconds}
+          handleChange={this.changeInput}
+        />
+      )
+    }
     return (
       <div className="App">
         <div className="timer">
-          <TimerInputs 
-            hours={this.state.hours}
-            minutes={this.state.minutes}
-            seconds={this.state.seconds}
-            handleChange={this.changeInput}
-          />
+          {timer}
         </div>
         <div className="controls">
-          <button>Start</button>
+          <button
+            onClick={this.createTimer}
+          >Start</button>
           <button>Clear</button>
         </div>
       </div>
