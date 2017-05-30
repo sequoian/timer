@@ -53,6 +53,10 @@ class App extends Component {
     }
     this.changeInput = this.changeInput.bind(this);
     this.createTimer = this.createTimer.bind(this);
+    this.startTimer = this.startTimer.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
+    this.clearTimer = this.clearTimer.bind(this);
+    this.tick = this.tick.bind(this);
   }
 
   changeInput(event) {
@@ -92,8 +96,37 @@ class App extends Component {
       this.setState({
         timer: duration
       })
-    }
 
+      this.startTimer();
+    }
+  }
+
+  startTimer() {
+    const interval = setInterval(this.tick, 1000);
+    this.setState({
+      intervalID: interval
+    });
+  }
+
+  stopTimer() {
+    this.setState({
+      intervalID: null
+    });
+  }
+
+  clearTimer() {
+    this.setState({
+      timer: null
+    });
+  }
+
+  tick() {
+    const timer = this.state.timer;
+    const decrement = moment.duration(1, 's');
+    timer.subtract(decrement);
+    this.setState({
+      timer: timer
+    });
   }
 
   render() {
