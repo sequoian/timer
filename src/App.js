@@ -44,6 +44,7 @@ class TimeDisplay extends Component {
 class App extends Component {
   constructor(props) {
     super(props);
+    this.timerSpeed = 250;  // how many milliseconds pass before each interval
     this.state = {
       hours: '0',
       minutes: '0',
@@ -116,7 +117,7 @@ class App extends Component {
   }
 
   startTimer() {
-    const interval = setInterval(this.tick, 1000);
+    const interval = setInterval(this.tick, this.timerSpeed);
     this.setState({
       intervalID: interval
     });
@@ -137,7 +138,7 @@ class App extends Component {
 
   tick() {
     const timer = this.state.timer;
-    const decrement = moment.duration(1, 's');
+    const decrement = moment.duration(this.timerSpeed, 'ms');
     timer.subtract(decrement);
     this.setState({
       timer: timer
