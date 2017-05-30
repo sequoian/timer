@@ -55,8 +55,9 @@ class App extends Component {
     this.createTimer = this.createTimer.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.stopTimer = this.stopTimer.bind(this);
-    this.clearTimer = this.clearTimer.bind(this);
+    this.removeTimer = this.removeTimer.bind(this);
     this.tick = this.tick.bind(this);
+    this.clear = this.clear.bind(this);
   }
 
   changeInput(event) {
@@ -109,12 +110,13 @@ class App extends Component {
   }
 
   stopTimer() {
+    clearInterval(this.state.intervalID);
     this.setState({
       intervalID: null
     });
   }
 
-  clearTimer() {
+  removeTimer() {
     this.setState({
       timer: null
     });
@@ -129,16 +131,20 @@ class App extends Component {
     });
   }
 
+  clear() {
+    this.stopTimer();
+    this.removeTimer();
+    this.setState({
+      hours: '',
+      minutes: '',
+      seconds: ''
+    });
+  }
+
   render() {
     let timer = null;
-    if (this.state.timer) {
-      timer = (
-        <TimeDisplay
-          timer={this.state.timer}
-        />
-      )
-    }
-    else {
+    let controlButton = null;
+    if (!this.state.timer) {
       timer = (
         <TimerInputs 
           hours={this.state.hours}
@@ -146,18 +152,55 @@ class App extends Component {
           seconds={this.state.seconds}
           handleChange={this.changeInput}
         />
-      )
+      );
+
+      controlButton = (
+        <button
+          onClick={this.createTimer}
+        >
+          Start
+        </button>
+      );
     }
+    else {
+      timer = (
+        <TimeDisplay
+          timer={this.state.timer}
+        />
+      );
+      
+      if (this.state.intervalID) {
+        controlButton = (
+          <button
+            onClick={this.stopTimer}
+          >
+            Stop
+          </button>
+        )
+      }
+      else {
+        controlButton = (
+          <button
+            onClick={this.startTimer}
+          >
+            Start
+          </button>
+        );
+      }
+    }
+    
     return (
       <div className="App">
         <div className="timer">
           {timer}
         </div>
         <div className="controls">
+          {controlButton}
           <button
-            onClick={this.createTimer}
-          >Start</button>
-          <button>Clear</button>
+            onClick={this.clear}
+          >
+            Clear
+          </button>
         </div>
       </div>
     );
