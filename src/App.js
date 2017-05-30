@@ -61,6 +61,7 @@ class App extends Component {
     this.removeTimer = this.removeTimer.bind(this);
     this.tick = this.tick.bind(this);
     this.clear = this.clear.bind(this);
+    this.endAlert = this.endAlert.bind(this);
   }
 
   changeInput(event) {
@@ -168,7 +169,15 @@ class App extends Component {
     this.setState({
       hours: '0',
       minutes: '0',
-      seconds: '0'
+      seconds: '0',
+      alert: false
+    });
+  }
+
+  endAlert() {
+    this.setState({
+      timer: null,
+      alert: false
     });
   }
 
@@ -226,7 +235,7 @@ class App extends Component {
         controlButton = (
           <button
             className="end"
-            onClick={this.removeTimer}
+            onClick={this.endAlert}
           >
             End
           </button>
