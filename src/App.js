@@ -3,6 +3,7 @@ import moment from 'moment';
 import 'moment-duration-format';
 import './App.css';
 import TimerInput from './TimerInput'
+import TimerDisplay from './TimerDisplay'
 
 class TimerInputs extends Component {
   render() {
@@ -192,13 +193,34 @@ class App extends Component {
       alert: false
     });
   }
+
+  stringToDuration(str) {
+    str = str.padStart(6, '0')
+    const duration = moment.duration({
+      hours: str.substr(0, 2),
+      minutes: str.substr(2, 2),
+      seconds: str.substr(4, 2)
+    })
+    if (duration.asHours() > 99) {
+      return moment.duration({
+        hours: 99,
+        minutes: 59,
+        seconds: 59
+      })
+    }
+    else return duration
+  }
   
   render() {
+    const d = this.stringToDuration('105')
     return (
-      <TimerInput
-        value={this.state.timerInput}
-        onChange={this.changeTimer}
+      <TimerDisplay
+        duration={d}
       />
+      // <TimerInput
+      //   value={this.state.timerInput}
+      //   onChange={this.changeTimer}
+      // />
     )
   }
 
