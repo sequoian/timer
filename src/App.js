@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import 'moment-duration-format';
 import './App.css';
+import TimerInput from './TimerInput'
 
 class TimerInputs extends Component {
   render() {
@@ -46,6 +47,7 @@ class App extends Component {
     super(props);
     this.timerSpeed = 250;  // how many milliseconds pass before each interval
     this.state = {
+      timerInput: '',
       hours: '0',
       minutes: '0',
       seconds: '0',
@@ -62,6 +64,16 @@ class App extends Component {
     this.tick = this.tick.bind(this);
     this.clear = this.clear.bind(this);
     this.endAlert = this.endAlert.bind(this);
+    this.changeTimer = this.changeTimer.bind(this);
+  }
+
+  changeTimer(event) {
+    let {value} = event.target
+    value = value.slice(0, 6)
+    if (value !== '' && !value.slice(-1).match(/\d/)) return
+    this.setState({
+      timerInput: value
+    })
   }
 
   changeInput(event) {
@@ -180,86 +192,95 @@ class App extends Component {
       alert: false
     });
   }
-
+  
   render() {
-    let timer = null;
-    let controlButton = null;
-    if (!this.state.timer) {
-      timer = (
-        <TimerInputs 
-          hours={this.state.hours}
-          minutes={this.state.minutes}
-          seconds={this.state.seconds}
-          handleChange={this.changeInput}
-        />
-      );
-
-      controlButton = (
-        <button
-          className="start"
-          onClick={this.createTimer}
-        >
-          Start
-        </button>
-      );
-    }
-    else {
-      timer = (
-        <TimeDisplay
-          timer={this.state.timer}
-        />
-      );
-      
-      // if a timer exists, decide which control button to use
-      if (this.state.intervalID) {
-        controlButton = (
-          <button
-            className="stop"
-            onClick={this.stopTimer}
-          >
-            Stop
-          </button>
-        )
-      }
-      else if (!this.state.alert) {
-        controlButton = (
-          <button
-            className="start"
-            onClick={this.startTimer}
-          >
-            Start
-          </button>
-        );
-      }
-      else {
-        controlButton = (
-          <button
-            className="end"
-            onClick={this.endAlert}
-          >
-            End
-          </button>
-        );
-      }
-    }
-
     return (
-      <div className="App">
-        <div className="timer">
-          {timer}
-        </div>
-        <div className="controls">
-          {controlButton}
-          <button
-            className="clear"
-            onClick={this.clear}
-          >
-            Clear
-          </button>
-        </div>
-      </div>
-    );
+      <TimerInput
+        value={this.state.timerInput}
+        onChange={this.changeTimer}
+      />
+    )
   }
+
+  // render() {
+  //   let timer = null;
+  //   let controlButton = null;
+  //   if (!this.state.timer) {
+  //     timer = (
+  //       <TimerInputs 
+  //         hours={this.state.hours}
+  //         minutes={this.state.minutes}
+  //         seconds={this.state.seconds}
+  //         handleChange={this.changeInput}
+  //       />
+  //     );
+
+  //     controlButton = (
+  //       <button
+  //         className="start"
+  //         onClick={this.createTimer}
+  //       >
+  //         Start
+  //       </button>
+  //     );
+  //   }
+  //   else {
+  //     timer = (
+  //       <TimeDisplay
+  //         timer={this.state.timer}
+  //       />
+  //     );
+      
+  //     // if a timer exists, decide which control button to use
+  //     if (this.state.intervalID) {
+  //       controlButton = (
+  //         <button
+  //           className="stop"
+  //           onClick={this.stopTimer}
+  //         >
+  //           Stop
+  //         </button>
+  //       )
+  //     }
+  //     else if (!this.state.alert) {
+  //       controlButton = (
+  //         <button
+  //           className="start"
+  //           onClick={this.startTimer}
+  //         >
+  //           Start
+  //         </button>
+  //       );
+  //     }
+  //     else {
+  //       controlButton = (
+  //         <button
+  //           className="end"
+  //           onClick={this.endAlert}
+  //         >
+  //           End
+  //         </button>
+  //       );
+  //     }
+  //   }
+
+  //   return (
+  //     <div className="App">
+  //       <div className="timer">
+  //         {timer}
+  //       </div>
+  //       <div className="controls">
+  //         {controlButton}
+  //         <button
+  //           className="clear"
+  //           onClick={this.clear}
+  //         >
+  //           Clear
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 }
 
 export default App;
