@@ -1,71 +1,25 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import 'moment-duration-format';
-import './App.css';
+//import './App.css';
 import TimerInput from './TimerInput'
 import TimerDisplay from './TimerDisplay'
 
-class TimerInputs extends Component {
-  render() {
-    const categories = ['hours', 'minutes', 'seconds'];
-    const inputs = categories.map((item, idx) => {
-      return (
-        <div key={idx}>
-          <label htmlFor={item}>{item}</label>
-          <input 
-            id={item}      
-            type="number"
-            min="0"
-            max="99"
-            name={item}
-            value={this.props[item]}
-            onChange={this.props.handleChange}
-          />
-        </div>
-      );
-    })
-
-    return (
-      <form className="timer-inputs">
-        {inputs}
-      </form>
-    );
-  }
-}
-
-class TimeDisplay extends Component {
-  render() {
-    return (
-      <div className="display">
-        {this.props.timer.format('h:mm:ss')}
-      </div>
-    );
-  }
-}
-
 class App extends Component {
   constructor(props) {
-    super(props);
-    this.timerSpeed = 250;  // how many milliseconds pass before each interval
+    super(props)
+    this.timerSpeed = 100
     this.state = {
       timerInput: '',
-      hours: '0',
-      minutes: '0',
-      seconds: '0',
-      timer: null,
+      endTime: null,
+      timeRemaining: moment.duration(0),
       intervalID: null,
-      alert: false,
-      notify: false
     }
-    this.changeInput = this.changeInput.bind(this);
-    this.createTimer = this.createTimer.bind(this);
-    this.startTimer = this.startTimer.bind(this);
-    this.stopTimer = this.stopTimer.bind(this);
-    this.removeTimer = this.removeTimer.bind(this);
-    this.tick = this.tick.bind(this);
-    this.clear = this.clear.bind(this);
-    this.endAlert = this.endAlert.bind(this);
-    this.changeTimer = this.changeTimer.bind(this);
+    this.createTimer = this.createTimer.bind(this)
+    this.startTimer = this.startTimer.bind(this)
+    this.stopTimer = this.stopTimer.bind(this)
+    this.tick = this.tick.bind(this)
+    this.changeTimer = this.changeTimer.bind(this)
   }
 
   changeTimer(event) {
@@ -73,15 +27,8 @@ class App extends Component {
     value = value.slice(0, 6)
     if (value !== '' && !value.slice(-1).match(/\d/)) return
     this.setState({
-      timerInput: value
-    })
-  }
-
-  changeInput(event) {
-    const input = event.target;
-    const value = input.value.slice(0, 2);  // limit value to 2 digits
-    this.setState({
-      [input.name]: value
+      timerInput: value,
+      timeRemaining: this.stringToDuration(value)
     })
   }
 
@@ -131,67 +78,32 @@ class App extends Component {
   }
 
   startTimer() {
-    const interval = setInterval(this.tick, this.timerSpeed);
-    this.setState({
-      intervalID: interval
-    });
+    this.setState(prevState => {
+      clearInterval(prevState.intervalID) // clear possible loitering interval
+      return {
+        intervalID: setInterval(this.tick, this.timerSpeed),
+        endTime: moment().add(prevState.timeRemaining)
+      }
+    })
   }
 
   stopTimer() {
     clearInterval(this.state.intervalID);
     this.setState({
       intervalID: null
-    });
-  }
-
-  removeTimer() {
-    this.setState({
-      timer: null
-    });
+    })
   }
 
   tick() {
-    const timer = this.state.timer;
-    const decrement = moment.duration(this.timerSpeed, 'ms');
-    timer.subtract(decrement);
+    const {timeRemaining} = this.state
+    const newTime = timeRemaining.subtract(this.timerSpeed, 'ms')
     this.setState({
-      timer: timer
-    });
-    this.checkTimer(timer)
-  }
-
-  checkTimer(time) {
-    if (time.asSeconds() <= 0) {
-      this.stopTimer();
-      this.setState({
-        alert: true
-      });
-
-      // notify user
-      if (this.state.notify) {
-        const n = new Notification ("Alert", {
-          body: `Your timer has gone off.`
-        });
-      }
+      timeRemaining: newTime
+    })
+    if (newTime.asMilliseconds() <= 0) {
+      this.stopTimer()
+      //this.alert()
     }
-  }
-
-  clear() {
-    this.stopTimer();
-    this.removeTimer();
-    this.setState({
-      hours: '0',
-      minutes: '0',
-      seconds: '0',
-      alert: false
-    });
-  }
-
-  endAlert() {
-    this.setState({
-      timer: null,
-      alert: false
-    });
   }
 
   stringToDuration(str) {
@@ -212,97 +124,23 @@ class App extends Component {
   }
   
   render() {
-    const d = this.stringToDuration('105')
     return (
-      <TimerDisplay
-        duration={d}
+      <div>
+      <TimerInput
+        value={this.state.timerInput}
+        onChange={this.changeTimer}
       />
-      // <TimerInput
-      //   value={this.state.timerInput}
-      //   onChange={this.changeTimer}
-      // />
+      <TimerDisplay
+        duration={this.state.timeRemaining}
+      />
+      <button
+        onClick={this.startTimer}
+        disabled={this.state.timeRemaining.asSeconds() <= 0}
+      >Start</button>
+      
+      </div>
     )
   }
-
-  // render() {
-  //   let timer = null;
-  //   let controlButton = null;
-  //   if (!this.state.timer) {
-  //     timer = (
-  //       <TimerInputs 
-  //         hours={this.state.hours}
-  //         minutes={this.state.minutes}
-  //         seconds={this.state.seconds}
-  //         handleChange={this.changeInput}
-  //       />
-  //     );
-
-  //     controlButton = (
-  //       <button
-  //         className="start"
-  //         onClick={this.createTimer}
-  //       >
-  //         Start
-  //       </button>
-  //     );
-  //   }
-  //   else {
-  //     timer = (
-  //       <TimeDisplay
-  //         timer={this.state.timer}
-  //       />
-  //     );
-      
-  //     // if a timer exists, decide which control button to use
-  //     if (this.state.intervalID) {
-  //       controlButton = (
-  //         <button
-  //           className="stop"
-  //           onClick={this.stopTimer}
-  //         >
-  //           Stop
-  //         </button>
-  //       )
-  //     }
-  //     else if (!this.state.alert) {
-  //       controlButton = (
-  //         <button
-  //           className="start"
-  //           onClick={this.startTimer}
-  //         >
-  //           Start
-  //         </button>
-  //       );
-  //     }
-  //     else {
-  //       controlButton = (
-  //         <button
-  //           className="end"
-  //           onClick={this.endAlert}
-  //         >
-  //           End
-  //         </button>
-  //       );
-  //     }
-  //   }
-
-  //   return (
-  //     <div className="App">
-  //       <div className="timer">
-  //         {timer}
-  //       </div>
-  //       <div className="controls">
-  //         {controlButton}
-  //         <button
-  //           className="clear"
-  //           onClick={this.clear}
-  //         >
-  //           Clear
-  //         </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 }
 
 export default App;

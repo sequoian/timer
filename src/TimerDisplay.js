@@ -1,6 +1,9 @@
 import React from 'react'
+import moment from 'moment'
 
 const TimerDisplay = ({duration}) => {
+  const ms = Math.ceil(duration.asMilliseconds() * .001) * 1000
+  duration = moment.duration(ms)
   let h = Math.floor(duration.asHours())
   let m = duration.minutes()
   let s = duration.seconds()
