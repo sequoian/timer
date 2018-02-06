@@ -5,10 +5,12 @@ import 'moment-duration-format';
 import TimerInput from './TimerInput'
 import TimerDisplay from './TimerDisplay'
 import TimerControls from './TimerControls'
+import TimerSound from './TimerSound'
 
 class App extends Component {
   constructor(props) {
     super(props)
+    this.audio = new TimerSound()
     this.timerSpeed = 100
     this.state = {
       timerInput: '',
@@ -65,11 +67,11 @@ class App extends Component {
   }
 
   alert() {
-    console.log('done!')
+    this.audio.play()
   }
 
   stopAlert() {
-    console.log('alert stopped')
+    this.audio.stop()
   }
 
   clearTimer() {
