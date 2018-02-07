@@ -22,7 +22,9 @@ const TimerDisplay = ({duration}) => {
   }
 
   return (
-    <div>
+    <div
+      className="display"
+    >
       <Time
         value={h}
         unit="h"
@@ -43,8 +45,8 @@ const Time = ({value, unit}) => {
   if (value == null) return null
   return (
     <span>
-      <span>{value}</span>
-      <span>{unit}</span>
+      <span className="number">{value}</span>
+      <span className="unit">{unit}</span>
     </span>
   )
 }

@@ -27,11 +27,7 @@ class TimerInput extends Component {
     return (
       <div
         onClick={this.focusInput}
-        style={{
-          display: 'inline-block',
-          borderBottom: '2px solid blue',
-          margin: '10px'
-        }}
+        className="display"
       >
         <Input
           value={value}
@@ -95,16 +91,9 @@ const InputDisplay = ({value}) => {
   )
 }
 
-const color1 = 'black'
-const color2 = 'gray'
-
 const Number = ({value, style}) => (
   <span
-    style={{
-      ...style,
-      color: value ? color1 : color2,
-      fontSize: '50px'
-    }}
+    className={value ? 'number used' : 'number mask'}
   >
     {value || '0'}
   </span>
@@ -112,10 +101,7 @@ const Number = ({value, style}) => (
 
 const Unit = ({value, children, style}) => (
   <span
-    style={{
-      ...style,
-      color: value ? color1 : color2
-    }}
+    className={value ? 'unit used' : 'unit mask'}
   >
     {children}
   </span>

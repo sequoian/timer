@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
-import moment from 'moment';
-import 'moment-duration-format';
-//import './App.css';
+import React, { Component } from 'react'
+import moment from 'moment'
+import 'moment-duration-format'
 import TimerInput from './TimerInput'
 import TimerDisplay from './TimerDisplay'
 import TimerControls from './TimerControls'
