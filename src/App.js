@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import moment from 'moment'
-import 'moment-duration-format'
 import TimerInput from './TimerInput'
 import TimerDisplay from './TimerDisplay'
 import TimerControls from './TimerControls'
@@ -25,6 +24,14 @@ class App extends Component {
     this.clearTimer = this.clearTimer.bind(this)
     this.resetTimer = this.resetTimer.bind(this)
     this.stopAlert = this.stopAlert.bind(this)
+  }
+
+  componentDidMount() {
+    document.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        document.getElementById('primary-btn').click()
+      }
+    })
   }
 
   changeTimer(event) {
@@ -76,7 +83,6 @@ class App extends Component {
   }
 
   stopAlert() {
-    this.audio.stop()
     this.resetTimer()
   }
 
@@ -88,9 +94,11 @@ class App extends Component {
       endTime: null,
       timeRemaining: moment.duration(0),
     })
+    document.getElementById('input').focus()
   }
 
   resetTimer() {
+    this.audio.stop()
     clearInterval(this.state.intervalID)
     this.setState(prevState => {
       return {
@@ -141,6 +149,7 @@ class App extends Component {
           reset={this.resetTimer}
           endAlert={this.stopAlert}
           mode={mode}
+          input={timerInput}
         />
       </div>
     )

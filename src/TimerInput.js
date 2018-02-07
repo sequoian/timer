@@ -24,6 +24,7 @@ class TimerInput extends Component {
 
   render() {
     const {value, onChange} = this.props
+    console.log(value)
     return (
       <div
         onClick={this.focusInput}
@@ -45,11 +46,19 @@ class TimerInput extends Component {
 
 const Input = ({value, onChange, setRef}) => (
   <input
+    id="input"
     type="number"
     min="0"
+    autoComplete="off"
     value={value}
     onChange={onChange}
     ref={setRef}
+    // set cursor at end of input
+    onFocus={e => {
+      const tmp = e.target.value
+      e.target.value = ''
+      e.target.value = tmp
+    }}
     // prevent anything other than digits from being input
     onKeyPress={e => {
       if (e.charCode >= 48 && e.charCode <= 57)

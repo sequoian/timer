@@ -1,6 +1,6 @@
 import React from 'react'
 
-const TimerControlsContainer = ({start, stop, clear, reset, endAlert, mode}) => {
+const TimerControlsContainer = ({start, stop, clear, reset, endAlert, mode, input}) => {
     switch (mode) {
       case 'input': return (
         <TimerControls
@@ -8,6 +8,7 @@ const TimerControlsContainer = ({start, stop, clear, reset, endAlert, mode}) => 
           primaryAction={start}
           secondaryLabel={'Clear'}
           secondaryAction={clear}
+          primaryDisabled={input === '' || parseInt(input, 10) < 1}
         />
       )
       case 'running': return (
@@ -40,10 +41,12 @@ const TimerControlsContainer = ({start, stop, clear, reset, endAlert, mode}) => 
     }
 }
 
-const TimerControls = ({primaryLabel, primaryAction, secondaryLabel, secondaryAction}) => (
+const TimerControls = ({primaryLabel, primaryAction, secondaryLabel, secondaryAction, primaryDisabled}) => (
   <div>
     <button
+      id="primary-btn"
       onClick={primaryAction}
+      disabled={primaryDisabled}
     >
       {primaryLabel}
     </button>
