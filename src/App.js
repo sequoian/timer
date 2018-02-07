@@ -17,6 +17,7 @@ class App extends Component {
       endTime: null,
       timeRemaining: moment.duration(0),
       intervalID: null,
+      mode: 'input'
     }
     this.startTimer = this.startTimer.bind(this)
     this.stopTimer = this.stopTimer.bind(this)
@@ -42,7 +43,8 @@ class App extends Component {
       clearInterval(prevState.intervalID) // clear possible loitering interval
       return {
         intervalID: setInterval(this.tick, this.timerSpeed),
-        endTime: moment().add(prevState.timeRemaining)
+        endTime: moment().add(prevState.timeRemaining),
+        mode: 'running'
       }
     })
   }
@@ -50,7 +52,8 @@ class App extends Component {
   stopTimer() {
     clearInterval(this.state.intervalID)
     this.setState({
-      intervalID: null
+      intervalID: null,
+      mode: 'paused'
     })
   }
 
@@ -63,6 +66,9 @@ class App extends Component {
     if (newTime.asMilliseconds() <= 0) {
       this.stopTimer()
       this.alert()
+      this.setState({
+        mode: 'alert'
+      })
     }
   }
 
@@ -72,6 +78,7 @@ class App extends Component {
 
   stopAlert() {
     this.audio.stop()
+    this.resetTimer()
   }
 
   clearTimer() {
@@ -90,7 +97,8 @@ class App extends Component {
       return {
         intervalID: null,
         endTime: null,
-        timeRemaining: this.stringToDuration(prevState.timerInput)
+        timeRemaining: this.stringToDuration(prevState.timerInput),
+        mode: 'input'
       }
     })
   }
@@ -113,21 +121,27 @@ class App extends Component {
   }
   
   render() {
+    const {mode, timerInput, timeRemaining} = this.state
     return (
       <div>
-        <TimerInput
-          value={this.state.timerInput}
-          onChange={this.changeTimer}
-        />
-        <TimerDisplay
-          duration={this.state.timeRemaining}
-        />
+        {mode === 'input'
+          ?
+          <TimerInput
+            value={timerInput}
+            onChange={this.changeTimer}
+          />
+          :
+          <TimerDisplay
+            duration={timeRemaining}
+          />
+        }
         <TimerControls
           start={this.startTimer}
           stop={this.stopTimer}
           clear={this.clearTimer}
           reset={this.resetTimer}
           endAlert={this.stopAlert}
+          mode={mode}
         />
       </div>
     )

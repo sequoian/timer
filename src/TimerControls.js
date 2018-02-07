@@ -1,23 +1,58 @@
 import React from 'react'
 
-const TimerControls = ({start, stop, clear, reset, endAlert}) => (
+const TimerControlsContainer = ({start, stop, clear, reset, endAlert, mode}) => {
+    switch (mode) {
+      case 'input': return (
+        <TimerControls
+          primaryLabel={'Start'}
+          primaryAction={start}
+          secondaryLabel={'Clear'}
+          secondaryAction={clear}
+        />
+      )
+      case 'running': return (
+        <TimerControls
+          primaryLabel={'Stop'}
+          primaryAction={stop}
+          secondaryLabel={'Reset'}
+          secondaryAction={reset}
+        />
+      )
+      case 'paused': return (
+        <TimerControls
+          primaryLabel={'Start'}
+          primaryAction={start}
+          secondaryLabel={'Reset'}
+          secondaryAction={reset}
+        />
+      )
+      case 'alert': return (
+        <TimerControls
+          primaryLabel={'Done'}
+          primaryAction={endAlert}
+          secondaryLabel={'Reset'}
+          secondaryAction={reset}
+        />
+      )
+      default: 
+        console.log('Invalid mode')
+        return null
+    }
+}
+
+const TimerControls = ({primaryLabel, primaryAction, secondaryLabel, secondaryAction}) => (
   <div>
     <button
-      onClick={start}
-    >Start</button>
+      onClick={primaryAction}
+    >
+      {primaryLabel}
+    </button>
     <button
-      onClick={stop}
-    >Stop</button>
-    <button
-      onClick={clear}
-    >Clear</button>
-    <button
-      onClick={reset}
-    >Reset</button>
-    <button
-      onClick={endAlert}
-    >Done</button>
+      onClick={secondaryAction}
+    >
+      {secondaryLabel}
+    </button>
   </div>
 )
 
-export default TimerControls
+export default TimerControlsContainer
