@@ -10,10 +10,10 @@ class App extends Component {
     super(props)
     this.audio = new TimerSound()
     this.timerSpeed = 100
-    this.state = {
+    this.state = this.hydrateFromStorage() || {
       timerInput: '',
       endTime: null,
-      timeRemaining: moment.duration(0),
+      timeRemaining: null,
       intervalID: null,
       mode: 'input'
     }
@@ -27,11 +27,44 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // if timer was already running, continue it
+    if (this.state.mode === 'running') {
+      this.setState(prevState => {
+        let remaining = moment.duration(prevState.endTime.valueOf() - moment().valueOf())
+        if (remaining < 0) return {
+          timeRemaining: moment.duration(0),
+          mode: 'alert',
+          intervalID: null
+        }
+        else return {
+          intervalID: setInterval(this.tick, this.timerSpeed),
+          timeRemaining: remaining
+        } 
+      })
+    }
+
+    // listen for enter key, clicks primary button
     document.addEventListener('keypress', e => {
       if (e.key === 'Enter') {
         document.getElementById('primary-btn').click()
       }
     })
+  }
+
+  hydrateFromStorage() {
+    const hydratedState = localStorage.getItem('timerstate')
+    if (!hydratedState) return null
+    const parsed = JSON.parse(hydratedState)
+    return {
+      ...parsed,
+      timeRemaining: moment.duration(parsed.timeRemaining),
+      endTime: moment(parsed.endTime)
+    }
+  }
+
+  componentDidUpdate() {
+    // store state in local storage
+    localStorage.setItem('timerstate', JSON.stringify(this.state))
   }
 
   changeTimer(event) {

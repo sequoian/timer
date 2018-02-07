@@ -3,9 +3,6 @@ import React, {Component} from 'react'
 class TimerInput extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      focused: false
-    }
     this.setInputRef = this.setInputRef.bind(this)
     this.focusInput = this.focusInput.bind(this)
   }
@@ -24,7 +21,6 @@ class TimerInput extends Component {
 
   render() {
     const {value, onChange} = this.props
-    console.log(value)
     return (
       <div
         onClick={this.focusInput}
