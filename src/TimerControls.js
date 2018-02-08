@@ -1,6 +1,6 @@
 import React from 'react'
 
-const TimerControlsContainer = ({start, stop, clear, reset, endAlert, mode, input}) => {
+const TimerControlsContainer = ({start, stop, clear, reset, mode, input}) => {
     switch (mode) {
       case 'input': return (
         <TimerControls
@@ -30,7 +30,7 @@ const TimerControlsContainer = ({start, stop, clear, reset, endAlert, mode, inpu
       case 'alert': return (
         <TimerControls
           primaryLabel={'Done'}
-          primaryAction={endAlert}
+          primaryAction={reset}
           secondaryLabel={'Reset'}
           secondaryAction={reset}
         />

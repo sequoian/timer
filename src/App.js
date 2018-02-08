@@ -9,13 +9,19 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.audio = new TimerSound()
-    this.timerSpeed = 100
+    this.timerSpeed = 1000
     this.state = this.hydrateFromStorage() || {
       timerInput: '',
       endTime: null,
       timeRemaining: null,
       intervalID: null,
-      mode: 'input'
+      mode: 'input',
+      msInfo: {
+        lastTickOrStart: null,
+        timeToNextTick: 0,
+        timeoutId: null
+      }
+      
     }
     this.startTimer = this.startTimer.bind(this)
     this.stopTimer = this.stopTimer.bind(this)
@@ -23,7 +29,6 @@ class App extends Component {
     this.changeTimer = this.changeTimer.bind(this)
     this.clearTimer = this.clearTimer.bind(this)
     this.resetTimer = this.resetTimer.bind(this)
-    this.stopAlert = this.stopAlert.bind(this)
   }
 
   componentDidMount() {
@@ -78,45 +83,97 @@ class App extends Component {
   }
 
   startTimer() {
+    const {mode} = this.state
+    if (mode === 'paused') {
+      // run timeout to next tick before restarting interval
+      this.setState(prevState => {
+        return {
+          msInfo: {
+            ...prevState.msInfo,
+            timeoutId: setTimeout(() => {
+              // timeout callback - call tick and start interval
+              this.tick()
+              this.setState({
+                intervalID: setInterval(this.tick, this.timerSpeed)
+              })
+            }, prevState.msInfo.timeToNextTick)
+          }
+        }
+      })
+    }
+    else {
+      // start fresh timer
+      this.setState(prevState => {
+        return {
+          intervalID: setInterval(this.tick, this.timerSpeed),
+          msInfo: {
+            ...prevState.msInfo,
+            timeToNextTick: this.timerSpeed
+          }
+        }
+      })
+    }
+
+    // more timer state
     this.setState(prevState => {
-      clearInterval(prevState.intervalID) // clear possible loitering interval
       return {
-        intervalID: setInterval(this.tick, this.timerSpeed),
+        mode: 'running',
         endTime: moment().add(prevState.timeRemaining),
-        mode: 'running'
+        msInfo: {
+          ...prevState.msInfo,
+          lastTickOrStart: moment(),
+        }
       }
     })
   }
 
+
   stopTimer() {
-    clearInterval(this.state.intervalID)
-    this.setState({
-      intervalID: null,
-      mode: 'paused'
+    const {intervalID, msInfo} = this.state
+    // clear any possible intervals
+    clearInterval(intervalID)
+    clearTimeout(msInfo.timeoutId)
+
+    // calculate the ms that has elapsed since last tick or stop
+    const elapsed = moment().valueOf() - msInfo.lastTickOrStart.valueOf()
+
+    this.setState(prevState => {
+      return {
+        mode: 'paused',
+        intervalID: null,
+        msInfo: {
+          ...prevState.msInfo,
+          timeToNextTick: prevState.msInfo.timeToNextTick - elapsed,
+          timeoutId: null
+        }
+      } 
     })
   }
 
   tick() {
-    const {timeRemaining} = this.state
-    const newTime = timeRemaining.subtract(this.timerSpeed, 'ms')
-    this.setState({
-      timeRemaining: newTime
+    const newTime = this.state.timeRemaining.subtract(this.timerSpeed, 'ms')
+    this.setState(prevState => {
+      return {
+        timeRemaining: newTime,
+        msInfo: {
+          ...prevState.msInfo,
+          lastTickOrStart: moment(),
+          timeToNextTick: this.timerSpeed
+        }
+      }
     })
     if (newTime.asMilliseconds() <= 0) {
-      this.stopTimer()
       this.alert()
-      this.setState({
-        mode: 'alert'
-      })
     }
   }
 
   alert() {
     this.audio.play()
-  }
-
-  stopAlert() {
-    this.resetTimer()
+    clearInterval(this.state.intervalID)
+    this.setState({
+      mode: 'alert',
+      intervalID: null
+    })
   }
 
   clearTimer() {
@@ -180,7 +237,6 @@ class App extends Component {
           stop={this.stopTimer}
           clear={this.clearTimer}
           reset={this.resetTimer}
-          endAlert={this.stopAlert}
           mode={mode}
           input={timerInput}
         />
