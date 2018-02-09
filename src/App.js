@@ -220,7 +220,7 @@ class App extends Component {
   render() {
     const {mode, timerInput, timeRemaining} = this.state
     return (
-      <div>
+      <div id="app">
         {mode === 'input'
           ?
           <TimerInput

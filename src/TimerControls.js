@@ -42,7 +42,7 @@ const TimerControlsContainer = ({start, stop, clear, reset, mode, input}) => {
 }
 
 const TimerControls = ({primaryLabel, primaryAction, secondaryLabel, secondaryAction, primaryDisabled}) => (
-  <div>
+  <div id="controls">
     <button
       id="primary-btn"
       onClick={primaryAction}

@@ -3,8 +3,12 @@ import React, {Component} from 'react'
 class TimerInput extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      focused: false
+    }
     this.setInputRef = this.setInputRef.bind(this)
     this.focusInput = this.focusInput.bind(this)
+    this.setFocus = this.setFocus.bind(this)
   }
 
   componentDidMount() {
@@ -13,6 +17,12 @@ class TimerInput extends Component {
 
   focusInput() {
     this.timerInput.focus()
+  }
+
+  setFocus(focused) {
+    this.setState({
+      focused
+    })
   }
 
   setInputRef(ref) {
@@ -30,17 +40,19 @@ class TimerInput extends Component {
           value={value}
           onChange={onChange}
           setRef={this.setInputRef}
+          setFocus={this.setFocus}
         />
         <InputDisplay
           value={value}
           onFocus={this.focusInput}
+          focused={this.state.focused}
         />
       </div>
     )
   }
 }
 
-const Input = ({value, onChange, setRef}) => (
+const Input = ({value, onChange, setRef, setFocus}) => (
   <input
     id="input"
     type="number"
@@ -54,6 +66,10 @@ const Input = ({value, onChange, setRef}) => (
       const tmp = e.target.value
       e.target.value = ''
       e.target.value = tmp
+      setFocus(true)
+    }}
+    onBlur={e => {
+      setFocus(false)
     }}
     // prevent anything other than digits from being input
     onKeyPress={e => {
@@ -69,10 +85,12 @@ const Input = ({value, onChange, setRef}) => (
   />
 )
 
-const InputDisplay = ({value}) => {
+const InputDisplay = ({value, focused}) => {
   const nums = value.split('').reverse()
   return (
-    <div>
+    <div
+      className={focused ? 'input-display focused' : 'input-display'}
+    >
       <Number
         value={nums[5]}
       />
