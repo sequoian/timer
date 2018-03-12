@@ -109,6 +109,7 @@ const InputDisplay = ({value, focused}) => {
         value={nums[1]}
       />
       <Number value={nums[0]} />
+      <div className="cursor" />
       <Unit value={nums[0]}>s</Unit>
     </div>
   )
