@@ -13,6 +13,7 @@ body, button {
   display: flex;
   justify-content: center;
   padding: 10px;
+  cursor: default;
 }
 
 .display > span {
@@ -47,6 +48,8 @@ input {
   font-size: 18px;
 }
 
+/* cursor */
+
 .cursor {
   display: inline-block;
   width: 1px;
@@ -57,7 +60,19 @@ input {
 
 .input-display.focused .cursor {
   background-color: #909090;
+  animation: blink 1.2s infinite;
 }
+
+@keyframes blink {
+  0%, 49% {
+    background-color: #909090;
+  }
+  50%, 99% {
+    background-color: inherit;
+  }
+}
+
+/* controls */
 
 #controls {
   display: flex;
@@ -77,6 +92,10 @@ button {
   border-radius: 2px;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
 }
 
 #primary-btn {
